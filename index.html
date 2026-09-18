@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dunkin' Iced Coffee Day - Buy 1 Take 1</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dunkin: {
+                            orange: '#FF671F',
+                            pink: '#DA1884',
+                            brown: '#794738',
+                            light: '#FFF5F0'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Fredoka One"', 'cursive'],
+                        sans: ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFF5F0;
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #FF671F 0%, #DA1884 100%);
+        }
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(218, 24, 132, 0.4);
+            border-color: #DA1884;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased selection:bg-dunkin-pink selection:text-white">
+
+    <!-- Header Section -->
+    <header class="header-bg text-white py-12 px-4 shadow-lg relative overflow-hidden">
+        <!-- Floating decorative circles -->
+        <div class="absolute top-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full translate-x-1/4 translate-y-1/4"></div>
+        
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <!-- Dunkin Logo (Using a Wikimedia transparent logo) -->
+            <img src="https://1000logos.net/wp-content/uploads/2017/08/Color-Dunkin-Donuts-Logo.jpg" 
+                 alt="Dunkin' Logo" 
+                 class="h-20 md:h-28 mx-auto mb-6 drop-shadow-md">
+            
+            <h1 class="text-4xl md:text-5xl font-display mb-4 text-shadow tracking-wide">
+                ICED COFFEE DAY
+            </h1>
+            <p class="text-xl md:text-2xl font-bold mb-2">Buy 1, Get 1 Large Iced Coffee!</p>
+            <p class="text-lg bg-white/20 inline-block px-4 py-1 rounded-full font-semibold">
+                📅 September 25, 2026 &nbsp;|&nbsp; ⏰ 10:00 AM - 6:00 PM
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 py-10">
+        
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-display text-dunkin-orange mb-4">Find a Participating Store</h2>
+            <p class="text-gray-600 mb-8 max-w-2xl mx-auto">Get ready for double the fun! Search for a branch near you to grab your two large iced coffees for only ₱95.</p>
+            
+            <!-- Search & Filter Controls -->
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center max-w-3xl mx-auto bg-white p-4 rounded-2xl shadow-md border-2 border-dunkin-pink/20">
+                <div class="relative w-full md:w-2/3">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Search branch name (e.g. BGC, Ayala)..." 
+                           class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-dunkin-orange focus:ring-2 focus:ring-dunkin-orange/20 outline-none transition-all font-semibold text-gray-700">
+                </div>
+                
+                <select id="regionFilter" class="w-full md:w-1/3 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-dunkin-pink focus:ring-2 focus:ring-dunkin-pink/20 outline-none transition-all font-bold text-gray-700 bg-white cursor-pointer">
+                    <option value="All">All Regions</option>
+                    <option value="Metro Manila">Metro Manila</option>
+                    <option value="Luzon">Luzon</option>
+                    <option value="Visayas">Visayas</option>
+                    <option value="Mindanao">Mindanao</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div class="flex justify-between items-center mb-4">
+            <span id="resultsCount" class="font-bold text-gray-500">Loading...</span>
+        </div>
+
+        <!-- Branches Grid -->
+        <div id="branchesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Branch Cards will be injected here via JS -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dunkin-brown text-white py-8 text-center mt-12 border-t-8 border-dunkin-orange">
+        <p class="font-bold">Happy Iced Coffee Day! ☕🍩</p>
+        <p class="text-sm text-gray-300 mt-2">This is a promotional page created for Dunkin' PH Iced Coffee Day.</p>
+    </footer>
+
+    <!-- App Logic -->
+    <script>
+        // We will fetch the data from the json file
+        let allBranches = [{"name": "10TH AVE. BGC", "region": "Metro Manila"}, {"name": "AGOO CIVIC CENTER", "region": "North Luzon"}, {"name": "AB CENTRAL (XENTRO MALL)", "region": "South Luzon"}, {"name": "6 TH STREET", "region": "Visayas"}, {"name": "ABREEZA HARDWARE", "region": "Mindanao"}, {"name": "1139 EDSA SOUTH BOUND", "region": "Metro Manila"}, {"name": "ALICIA", "region": "North Luzon"}, {"name": "AD CENTER SQUARE (SANTOLAN)", "region": "South Luzon"}, {"name": "ABUCAY 2", "region": "Visayas"}, {"name": "AGORA", "region": "Mindanao"}, {"name": "25/7 MCKINLEY", "region": "Metro Manila"}, {"name": "ANGAT", "region": "North Luzon"}, {"name": "ALFONSO", "region": "South Luzon"}, {"name": "ABUCAY TERMINAL", "region": "Visayas"}, {"name": "AGORA 2", "region": "Mindanao"}, {"name": "2ND AVENUE", "region": "Metro Manila"}, {"name": "ARENA", "region": "North Luzon"}, {"name": "ANTIPOLO", "region": "South Luzon"}, {"name": "AMIGO", "region": "Visayas"}, {"name": "AGORA 3 DEPARTURE", "region": "Mindanao"}, {"name": "A. MABINI ERMITA", "region": "Metro Manila"}, {"name": "BAGUIO CENTERMALL IN LINE", "region": "North Luzon"}, {"name": "AYALA MALL FELIZ", "region": "South Luzon"}, {"name": "ARANETA DT", "region": "Visayas"}, {"name": "AGR PHARMACY", "region": "Mindanao"}, {"name": "A. RIVERA", "region": "Metro Manila"}, {"name": "BALAGTAS II", "region": "North Luzon"}, {"name": "AYALA MALL LEGASPI", "region": "South Luzon"}, {"name": "AS FORTUNA", "region": "Visayas"}, {"name": "AGUINALDO", "region": "Mindanao"}, {"name": "AGONCILLO 2", "region": "Metro Manila"}, {"name": "BALANGA GALERIA", "region": "North Luzon"}, {"name": "BALAYAN OUTLET", "region": "South Luzon"}, {"name": "AVILES", "region": "Visayas"}, {"name": "AMPAYON", "region": "Mindanao"}, {"name": "AIRPORT ROAD", "region": "Metro Manila"}, {"name": "BALIBAGO", "region": "North Luzon"}, {"name": "BATANGAS SHOP", "region": "South Luzon"}, {"name": "AYALA CENTRAL BLOC", "region": "Visayas"}, {"name": "AYALA CENTRIO MAIN", "region": "Mindanao"}, {"name": "ALI MALL MAIN", "region": "Metro Manila"}, {"name": "BALINGIT WAREHOUSE", "region": "North Luzon"}, {"name": "BAUAN BOOTH", "region": "South Luzon"}, {"name": "AYALA TERMINAL CEBU", "region": "Visayas"}, {"name": "BAMBU ESTATE (DESTINATION STORE)", "region": "Mindanao"}, {"name": "ANNAPOLIS", "region": "Metro Manila"}, {"name": "BALIWAG", "region": "North Luzon"}, {"name": "BAY CITY MALL BATANGAS", "region": "South Luzon"}, {"name": "BAYBAY CENTRAL", "region": "Visayas"}, {"name": "BAROBO (BOSTON)", "region": "Mindanao"}, {"name": "ARANETA SQUARE", "region": "Metro Manila"}, {"name": "BAMBANG", "region": "North Luzon"}, {"name": "BICOL INTERNATIONAL AIRPORT", "region": "South Luzon"}, {"name": "BOHOL CML", "region": "Visayas"}, {"name": "BAYUGAN (BROOKLYN)", "region": "Mindanao"}, {"name": "ARAYAT CUBAO", "region": "Metro Manila"}, {"name": "BANTAY", "region": "North Luzon"}, {"name": "BICUTAN 2", "region": "South Luzon"}, {"name": "CADIZ", "region": "Visayas"}, {"name": "BIG R", "region": "Mindanao"}, {"name": "ARCOVIA", "region": "Metro Manila"}, {"name": "BARRETO", "region": "North Luzon"}, {"name": "BINAN", "region": "South Luzon"}, {"name": "CALTEX HERNAEZ", "region": "Visayas"}, {"name": "BIG R TERMINAL", "region": "Mindanao"}, {"name": "ARMSTRONG", "region": "Metro Manila"}, {"name": "BAUANG", "region": "North Luzon"}, {"name": "BINAN CENTRAL MALL", "region": "South Luzon"}, {"name": "CALTEX LA CARLOTA", "region": "Visayas"}, {"name": "BISLIG", "region": "Mindanao"}, {"name": "ATM 2 GF-8757 PASEO CENTER", "region": "Metro Manila"}, {"name": "BINALONAN", "region": "North Luzon"}, {"name": "BINANGONAN BOOTH", "region": "South Luzon"}, {"name": "CAPITOL CENTRAL", "region": "Visayas"}, {"name": "BULUA BUS TERMINAL", "region": "Mindanao"}, {"name": "AURORA", "region": "Metro Manila"}, {"name": "BOCAUE SHOP", "region": "North Luzon"}, {"name": "BINANGONAN MAMBOG", "region": "South Luzon"}, {"name": "CATBALOGAN", "region": "Visayas"}, {"name": "C3 MALL", "region": "Mindanao"}, {"name": "AVIDA", "region": "Metro Manila"}, {"name": "BONIFACIO 2", "region": "North Luzon"}, {"name": "BONOT DRIVE THRU", "region": "South Luzon"}, {"name": "CATICLAN", "region": "Visayas"}, {"name": "CALUMPANG", "region": "Mindanao"}, {"name": "AYALA CIRCUIT", "region": "Metro Manila"}, {"name": "BUS BAY SMP", "region": "North Luzon"}, {"name": "BOSO BOSO DT", "region": "South Luzon"}, {"name": "CHONG HUA", "region": "Visayas"}, {"name": "CENTRO MARAMAG", "region": "Mindanao"}, {"name": "AYALA CLOVERLEAF", "region": "Metro Manila"}, {"name": "CABANATUAN MAIN", "region": "North Luzon"}, {"name": "C6 TAYTAY", "region": "South Luzon"}, {"name": "CITY MALL PAROLA", "region": "Visayas"}, {"name": "CITI HARDWARE BULUA", "region": "Mindanao"}, {"name": "AYALA MALL PASIG", "region": "Metro Manila"}, {"name": "CABIAO", "region": "North Luzon"}, {"name": "CABUYAO BAYAN", "region": "South Luzon"}, {"name": "CITY TIME SQUARE", "region": "Visayas"}, {"name": "CITY MALL TETUAN", "region": "Mindanao"}, {"name": "AYALA MEZZANINE", "region": "Metro Manila"}, {"name": "CALLE BONIFACIO", "region": "North Luzon"}, {"name": "CAINTA CATHOLIC", "region": "South Luzon"}, {"name": "COGON", "region": "Visayas"}, {"name": "CITY MART", "region": "Mindanao"}, {"name": "AYALA SOUTHPARK", "region": "Metro Manila"}, {"name": "CALTEX ANGELES", "region": "North Luzon"}, {"name": "CALICANTO", "region": "South Luzon"}, {"name": "COLONNADE MANDAUE", "region": "Visayas"}, {"name": "DIGOS TERMINAL (NEW SATELLITE TERMINAL)", "region": "Mindanao"}, {"name": "AZURE", "region": "Metro Manila"}, {"name": "CALTEX BONIFACIO", "region": "North Luzon"}, {"name": "CALTEX C. RAYMUNDO", "region": "South Luzon"}, {"name": "DANAO", "region": "Visayas"}, {"name": "DIVISORIA BRANCH", "region": "Mindanao"}, {"name": "BALIWAG", "region": "Metro Manila"}, {"name": "CALTEX UPPER SESSION", "region": "North Luzon"}, {"name": "CALTEX JUNCTION PUERTO PRINCESA", "region": "South Luzon"}, {"name": "DZR - AIRPORT", "region": "Visayas"}, {"name": "DIVISORIA DT", "region": "Mindanao"}, {"name": "BANAWE (2018)", "region": "Metro Manila"}, {"name": "CARMEN TOWER", "region": "North Luzon"}, {"name": "CALTEX MOLINO ROAD", "region": "South Luzon"}, {"name": "EMALL3", "region": "Visayas"}, {"name": "ECOLAND (Echo One)", "region": "Mindanao"}, {"name": "BARANGKA BONI", "region": "Metro Manila"}, {"name": "CASTILLEJOS", "region": "North Luzon"}, {"name": "CALTEX SAN PABLO", "region": "South Luzon"}, {"name": "FJ88 LIGHTHOUSE", "region": "Visayas"}, {"name": "EL SALVADOR", "region": "Mindanao"}, {"name": "BAYANI ROAD", "region": "Metro Manila"}, {"name": "CAUAYAN CENTRO", "region": "North Luzon"}, {"name": "CALTEX SLEX SOUTHBOUND", "region": "South Luzon"}, {"name": "FORTUNE TOWNE", "region": "Visayas"}, {"name": "FELCRIS CENTRALE", "region": "Mindanao"}, {"name": "BEST CHOICE", "region": "Metro Manila"}, {"name": "CAYPOMBO", "region": "North Luzon"}, {"name": "CANDELARIA 2", "region": "South Luzon"}, {"name": "FUENTE", "region": "Visayas"}, {"name": "GAISANO 2", "region": "Mindanao"}, {"name": "BLUMENTRITT 2", "region": "Metro Manila"}, {"name": "CENTRUM POZORRUBIO", "region": "North Luzon"}, {"name": "CENTENNIAL KAWIT", "region": "South Luzon"}, {"name": "GAISANO CENTRO", "region": "Visayas"}, {"name": "GAISANO BULUA", "region": "Mindanao"}, {"name": "BONI CIRCLE", "region": "Metro Manila"}, {"name": "CENTRAL MALL DASMARINAS", "region": "North Luzon"}, {"name": "GAISANO CITY", "region": "South Luzon"}, {"name": "GAISANO CITY DEPT. STORE", "region": "Visayas"}, {"name": "BPI NOVA", "region": "Mindanao"}, {"name": "CITY WALK TARLAC", "region": "Metro Manila"}, {"name": "CHOICE MARKET", "region": "North Luzon"}, {"name": "GAISANO COUNTRY MALL", "region": "South Luzon"}, {"name": "GAISANO GRAND CITIGATE MALL BUHANGIN", "region": "Visayas"}, {"name": "BRITANNY", "region": "Mindanao"}, {"name": "CLARK 1", "region": "Metro Manila"}, {"name": "CLEAN FUEL TERESA", "region": "North Luzon"}, {"name": "GAISANO DANAO", "region": "South Luzon"}, {"name": "GAISANO GRAND MALL DIGOS", "region": "Visayas"}, {"name": "CALIFORNIA GARDEN SQUARE", "region": "Mindanao"}, {"name": "CONCEPCION", "region": "Metro Manila"}, {"name": "CLEANFUEL MAHOGANY", "region": "North Luzon"}, {"name": "GAISANO GRAND LILOAN", "region": "South Luzon"}, {"name": "GAISANO GRAND MALL TORIL", "region": "Visayas"}, {"name": "CALTEX ANONAS", "region": "Mindanao"}, {"name": "CONCEPCION (WALTERMART)", "region": "Metro Manila"}, {"name": "GAISANO GRAND PLAZA", "region": "North Luzon"}, {"name": "GAISANO MAIN ENTRANCE", "region": "South Luzon"}, {"name": "CALTEX BONI", "region": "Visayas"}, {"name": "DAU NLEX", "region": "Mindanao"}, {"name": "DARAGA CALTEX", "region": "Metro Manila"}, {"name": "GAISANO KALIBO", "region": "North Luzon"}, {"name": "GAISANO MALAYBALAY", "region": "South Luzon"}, {"name": "CALTEX CORUMI", "region": "Visayas"}, {"name": "FLORIDA", "region": "Mindanao"}, {"name": "DASMARINAS", "region": "Metro Manila"}, {"name": "GAISANO MANDAUE NORTH", "region": "North Luzon"}, {"name": "GAISANO MALL", "region": "South Luzon"}, {"name": "CALTEX GREENHILLS (2019)", "region": "Visayas"}, {"name": "HARBOR SHOP", "region": "Mindanao"}, {"name": "DASMARINAS 2", "region": "Metro Manila"}, {"name": "GAISANO MINGLANILLA", "region": "North Luzon"}, {"name": "GAISANO MALL GRAND TAGUM", "region": "South Luzon"}, {"name": "CALTEX PARANG", "region": "Visayas"}, {"name": "HERMOSA BATAAN DT", "region": "Mindanao"}, {"name": "DEL ROSARIO DRIVE THRU", "region": "Metro Manila"}, {"name": "GAISANO SRP", "region": "North Luzon"}, {"name": "GAISANO PUERTO", "region": "South Luzon"}, {"name": "CALTEX UERM", "region": "Visayas"}, {"name": "ICC STA MARIA", "region": "Mindanao"}, {"name": "DIVERSION TERMINAL", "region": "Metro Manila"}, {"name": "GAISANO TISA", "region": "North Luzon"}, {"name": "GAISANO VALENCIA", "region": "South Luzon"}, {"name": "CAMARIN", "region": "Visayas"}, {"name": "JENRA MALL STO. ROSARIO", "region": "Mindanao"}, {"name": "GASIANO TABUNOK 3", "region": "Metro Manila"}, {"name": "GATAS", "region": "North Luzon"}, {"name": "CARDINAL SANTOS", "region": "South Luzon"}, {"name": "JUMBO JENRA", "region": "Visayas"}, {"name": "EMILIO AGUINALDO SILANG DT", "region": "Mindanao"}, {"name": "GATUSLAO", "region": "Metro Manila"}, {"name": "GOV. LIM", "region": "North Luzon"}, {"name": "KISAD", "region": "South Luzon"}, {"name": "FLYING V TURBINA", "region": "Visayas"}, {"name": "GOV. PERDICES ST. DUMAGUETE", "region": "Mindanao"}, {"name": "GOV. LIM", "region": "Metro Manila"}, {"name": "CASIMIRO", "region": "North Luzon"}, {"name": "LUCAO", "region": "South Luzon"}, {"name": "FTI HYPERMART TAGUIG", "region": "Visayas"}, {"name": "HI STRIP", "region": "Mindanao"}, {"name": "GRAND KIDAPAWAN", "region": "Metro Manila"}, {"name": "CENTRO ALABANG", "region": "North Luzon"}, {"name": "MAGALANG", "region": "South Luzon"}, {"name": "GAISANO BINANGONAN", "region": "Visayas"}, {"name": "HINIGARAN", "region": "Mindanao"}, {"name": "GUSU DRIVE THRU", "region": "Metro Manila"}, {"name": "CERES", "region": "North Luzon"}, {"name": "MAIN - RIZAL ST.", "region": "South Luzon"}, {"name": "GLASSHOUSE", "region": "Visayas"}, {"name": "IBAJAY", "region": "Mindanao"}, {"name": "IBT", "region": "Metro Manila"}, {"name": "CITI PLAZA", "region": "North Luzon"}, {"name": "MALOLOS", "region": "South Luzon"}, {"name": "GUITNANG BAYAN SAN MATEO", "region": "Visayas"}, {"name": "IL CORSO", "region": "Mindanao"}, {"name": "ILIGAN (QUEZON AVENUE)", "region": "Metro Manila"}, {"name": "CITYWALK", "region": "North Luzon"}, {"name": "MALOLOS 2 / MALOLOS CROSSING", "region": "South Luzon"}, {"name": "IBAAN DRIVE THRU", "region": "Visayas"}, {"name": "INSULAR SQUARE", "region": "Mindanao"}, {"name": "ILIGAN TUBOD", "region": "Metro Manila"}, {"name": "CLEANFUEL BONI", "region": "North Luzon"}, {"name": "MANGALDAN 2", "region": "South Luzon"}, {"name": "IMALL ANTIPOLO", "region": "Visayas"}, {"name": "ISLAND CENTRAL MALL", "region": "Mindanao"}, {"name": "INTEGRATED BUS TERMINAL (IBT)", "region": "Metro Manila"}, {"name": "COMEMBO", "region": "North Luzon"}, {"name": "MARQUE MALL IN LINE", "region": "South Luzon"}, {"name": "IMALL CANLUBANG", "region": "Visayas"}, {"name": "JA CLARIN", "region": "Mindanao"}, {"name": "JS GAISANO MALL - GMALL DAVAO", "region": "Metro Manila"}, {"name": "CYBERSCAPE GAMMA", "region": "North Luzon"}, {"name": "METRO TOWN MALL", "region": "South Luzon"}, {"name": "IMALL FAMY", "region": "Visayas"}, {"name": "JY SQUARE 2", "region": "Mindanao"}, {"name": "KCC GSC", "region": "Metro Manila"}, {"name": "DECA MALL", "region": "North Luzon"}, {"name": "MOONBAY", "region": "South Luzon"}, {"name": "JETTI BINANGONAN", "region": "Visayas"}, {"name": "KABANKALAN", "region": "Mindanao"}, {"name": "KCC MARBEL", "region": "Metro Manila"}, {"name": "DIAMOND ARCADE", "region": "North Luzon"}, {"name": "NARVACAN", "region": "South Luzon"}, {"name": "JETTI MOLINO - DRIVE THRU", "region": "Visayas"}, {"name": "LEVEL 2 - PIER 3", "region": "Mindanao"}, {"name": "KCC ZAMBOANGA", "region": "Metro Manila"}, {"name": "DIMASALANG", "region": "North Luzon"}, {"name": "NE PACIFIC MALL INLINE", "region": "South Luzon"}, {"name": "JETTI SAN PEDRO", "region": "Visayas"}, {"name": "LIBERTAD", "region": "Mindanao"}, {"name": "KIDAPAWAN TERMINAL", "region": "Metro Manila"}, {"name": "DONA ISABEL", "region": "North Luzon"}, {"name": "NEPO MALL DAGUPAN", "region": "South Luzon"}, {"name": "JETTI SILANG", "region": "Visayas"}, {"name": "LOPEZ JAENA", "region": "Mindanao"}, {"name": "LAGUINDINGAN AIRPORT", "region": "Metro Manila"}, {"name": "DONA MANUELA", "region": "North Luzon"}, {"name": "ORANI", "region": "South Luzon"}, {"name": "KADIWA", "region": "Visayas"}, {"name": "LIFESTYLE DISTRICT", "region": "Mindanao"}, {"name": "DONA SOLEDAD", "region": "Metro Manila"}, {"name": "PASEO JORGE BULANAO", "region": "North Luzon"}, {"name": "KUMINTANG ILAYA", "region": "South Luzon"}, {"name": "MACTAN DT", "region": "Visayas"}, {"name": "LIMKETKAI", "region": "Mindanao"}, {"name": "DOROTEO JOSE LRT", "region": "Metro Manila"}, {"name": "PATRIA DE BAGUIO", "region": "North Luzon"}, {"name": "LCC - TABACO", "region": "South Luzon"}, {"name": "MACTAN NEW TOWN", "region": "Visayas"}, {"name": "LIMKETKAI 2", "region": "Mindanao"}, {"name": "DUNKIN FOUR NEO", "region": "Metro Manila"}, {"name": "PEREZ", "region": "North Luzon"}, {"name": "LCC DARAGA", "region": "South Luzon"}, {"name": "MACTAN PRE-DEPARTURE AREA", "region": "Visayas"}, {"name": "EDSA GRACEPARK", "region": "Mindanao"}, {"name": "PETINES ARCADE SAN MATEO", "region": "Metro Manila"}, {"name": "LCC POLANGUI 2", "region": "North Luzon"}, {"name": "MARINA MALL", "region": "South Luzon"}, {"name": "MALAYBALAY", "region": "Visayas"}, {"name": "EDSA MONUMENTO", "region": "Mindanao"}, {"name": "PETRON ECHAGUE", "region": "Metro Manila"}, {"name": "LEGAZPI SALES AREA", "region": "North Luzon"}, {"name": "MEGAWORLD MANDURRIAO", "region": "South Luzon"}, {"name": "MALAYBALAY TERMINAL", "region": "Visayas"}, {"name": "ESCODA", "region": "Mindanao"}, {"name": "PETRON LAKESHORE", "region": "Metro Manila"}, {"name": "LIGAO CENTRO", "region": "North Luzon"}, {"name": "METRO BAYBAY", "region": "South Luzon"}, {"name": "MARBEL", "region": "Visayas"}, {"name": "ESPANA SHOP", "region": "Mindanao"}, {"name": "PETRON NORZAGARAY", "region": "Metro Manila"}, {"name": "LIGAO TOWN CENTER", "region": "North Luzon"}, {"name": "METRO CAPULAY", "region": "South Luzon"}, {"name": "MASTERSON Drive thru", "region": "Visayas"}, {"name": "ETON CENTRIS", "region": "Mindanao"}, {"name": "PRENZA", "region": "Metro Manila"}, {"name": "LIPA MARKET", "region": "North Luzon"}, {"name": "METRO CATBALOGAN", "region": "South Luzon"}, {"name": "NCCC CENTERPOINT 2", "region": "Visayas"}, {"name": "EVACOM", "region": "Mindanao"}, {"name": "RIZAL", "region": "Metro Manila"}, {"name": "LIPA SHOP", "region": "North Luzon"}, {"name": "METRO DUMLOG", "region": "South Luzon"}, {"name": "NCCC UYANGUREN", "region": "Visayas"}, {"name": "EVANGELISTA", "region": "Mindanao"}, {"name": "RIZAL TRIANGLE", "region": "Metro Manila"}, {"name": "LOTUS MALL", "region": "North Luzon"}, {"name": "METRO SUM-AG", "region": "South Luzon"}, {"name": "NUNEZ", "region": "Visayas"}, {"name": "EVER 1", "region": "Mindanao"}, {"name": "MAGSAYSAY NAGA", "region": "Metro Manila"}, {"name": "METRO TACLOBAN", "region": "North Luzon"}, {"name": "ORORAMA SUPERCENTER", "region": "South Luzon"}, {"name": "EVER GOTESCO MALL LOWER GRD FLR", "region": "Visayas"}, {"name": "ROBINSONS CALASIAO", "region": "Mindanao"}, {"name": "MAHARLIKA", "region": "Metro Manila"}, {"name": "NULA TULA", "region": "North Luzon"}, {"name": "ORORAMA SUPERCENTER CARMEN", "region": "South Luzon"}, {"name": "FAIRVIEW TERRACES", "region": "Visayas"}, {"name": "ROBINSONS GAPAN", "region": "Mindanao"}, {"name": "MAPLE GROVE", "region": "Metro Manila"}, {"name": "ONE PAVILLION MALL", "region": "North Luzon"}, {"name": "PATIN AY", "region": "South Luzon"}, {"name": "FARMERS BRIDGEWAY", "region": "Visayas"}, {"name": "ROBINSONS SAN FERNANDO", "region": "Mindanao"}, {"name": "MARYHILL LUCENA", "region": "Metro Manila"}, {"name": "OPEN MARKET MANSILINGAN", "region": "North Luzon"}, {"name": "FESTIVAL MAIN", "region": "South Luzon"}, {"name": "ROBINSONS SAN NICOLAS", "region": "Visayas"}, {"name": "MAUBAN", "region": "Mindanao"}, {"name": "OTON DRIVE THRU", "region": "Metro Manila"}, {"name": "PHOENIX MATINA", "region": "North Luzon"}, {"name": "FISHERMALL", "region": "South Luzon"}, {"name": "ROBINSONS SANTIAGO", "region": "Visayas"}, {"name": "MENDEZ", "region": "Mindanao"}, {"name": "PACIFIC MALL (TQCFCI)", "region": "Metro Manila"}, {"name": "PIONEER AVE. - GSC", "region": "North Luzon"}, {"name": "FISHERMALL MALABON", "region": "South Luzon"}, {"name": "ROBINSONS TUGUEGARAO", "region": "Visayas"}, {"name": "MERCEDES PASIG", "region": "Mindanao"}, {"name": "PALO", "region": "Metro Manila"}, {"name": "POLOMOLOK MAIN", "region": "North Luzon"}, {"name": "FLORENCE WAY", "region": "South Luzon"}, {"name": "SALAPUNGAN INTERSECTION", "region": "Visayas"}, {"name": "MONTALBAN", "region": "Mindanao"}, {"name": "PARKMALL", "region": "Metro Manila"}, {"name": "PUERTO", "region": "North Luzon"}, {"name": "FPC ROXAS", "region": "South Luzon"}, {"name": "SAN CARLOS", "region": "Visayas"}, {"name": "MONTALBAN TOWN CENTER", "region": "Mindanao"}, {"name": "PETRON CATBALOGAN", "region": "Metro Manila"}, {"name": "PUROK MALAKAS", "region": "North Luzon"}, {"name": "G. DIAZ (2015)", "region": "South Luzon"}, {"name": "SAN FABIAN", "region": "Visayas"}, {"name": "MORONG CENTERPOINT", "region": "Mindanao"}, {"name": "PETRON ESCARIO", "region": "Metro Manila"}, {"name": "GAGALANGIN", "region": "North Luzon"}, {"name": "SAN FERNANDO DT", "region": "South Luzon"}, {"name": "MUZON TAYTAY", "region": "Visayas"}, {"name": "POBLACION", "region": "Mindanao"}, {"name": "ROBINSONS BIG-R", "region": "Metro Manila"}, {"name": "GALAS", "region": "North Luzon"}, {"name": "SAN FERNANDO MARKET", "region": "South Luzon"}, {"name": "NAGA CITY", "region": "Visayas"}, {"name": "PRINCE MALL BAYBAY", "region": "Mindanao"}, {"name": "ROBINSONS ILIGAN", "region": "Metro Manila"}, {"name": "GALLERIA GDI", "region": "North Luzon"}, {"name": "SAN ILDEFONSO SHOP", "region": "South Luzon"}, {"name": "NAGCARLAN", "region": "Visayas"}, {"name": "QUEZON AVE", "region": "Mindanao"}, {"name": "ROBINSONS ILIGAN L3", "region": "Metro Manila"}, {"name": "GATEWAY BEV.", "region": "North Luzon"}, {"name": "SAN LEONARDO DT", "region": "South Luzon"}, {"name": "NASUGBU", "region": "Visayas"}, {"name": "ROBINSON PLACE", "region": "Mindanao"}, {"name": "ROBINSONS PAGADIAN", "region": "Metro Manila"}, {"name": "GATEWAY MALL", "region": "North Luzon"}, {"name": "SAN MIGUEL 2", "region": "South Luzon"}, {"name": "NCCC MALL 2", "region": "Visayas"}, {"name": "ROBINSON ROXAS", "region": "Mindanao"}, {"name": "ROBINSONS TAGUM 2", "region": "Metro Manila"}, {"name": "GEN. T. DE LEON", "region": "North Luzon"}, {"name": "SAN RAFAEL", "region": "South Luzon"}, {"name": "NEW AYALA", "region": "Visayas"}, {"name": "ROBINSONS", "region": "Mindanao"}, {"name": "ROBINSONS VALENCIA", "region": "Metro Manila"}, {"name": "HALINA SHOP", "region": "North Luzon"}, {"name": "SANTIAGO", "region": "South Luzon"}, {"name": "NEW LEMERY", "region": "Visayas"}, {"name": "ROBINSONS GALLERIA CEBU", "region": "Mindanao"}, {"name": "SAN FRANCISCO (CALIFORNIA)", "region": "Metro Manila"}, {"name": "HERMOSA", "region": "North Luzon"}, {"name": "SANTIAGO 4LANES PLAZA", "region": "South Luzon"}, {"name": "NOMO MALL", "region": "Visayas"}, {"name": "ROBINSONS JARO", "region": "Mindanao"}, {"name": "SAN FRANCISCO 2 (STA. FE)", "region": "Metro Manila"}, {"name": "HI-TOP", "region": "North Luzon"}, {"name": "SAVANO PARK", "region": "South Luzon"}, {"name": "NUCITI MALL", "region": "Visayas"}, {"name": "ROBINSONS NORTH", "region": "Mindanao"}, {"name": "SAN PEDRO (Shuttle)", "region": "Metro Manila"}, {"name": "HOLIDAY ISLAND MALL", "region": "North Luzon"}, {"name": "SAVEMORE TUGUEGARAO", "region": "South Luzon"}, {"name": "OLIVAREZ PLAZA LB", "region": "Visayas"}, {"name": "ROBINSONS ORMOC", "region": "Mindanao"}, {"name": "SANTIAGO BLVD.", "region": "Metro Manila"}, {"name": "HULO SHOP", "region": "North Luzon"}, {"name": "SEAOIL SINDALAN", "region": "South Luzon"}, {"name": "PACIFIC MALL", "region": "Visayas"}, {"name": "ROBINSONS PAVIA", "region": "Mindanao"}, {"name": "SHELL - MAA", "region": "Metro Manila"}, {"name": "ISETAN RECTO", "region": "North Luzon"}, {"name": "SEGUNDO", "region": "South Luzon"}, {"name": "PACIFIC MALL - LEGASPI", "region": "Visayas"}, {"name": "ROBINSONS PLACE", "region": "Mindanao"}, {"name": "SHELL BAGO APLAYA", "region": "Metro Manila"}, {"name": "JENNIFER BLDG. BUENDIA PASAY", "region": "North Luzon"}, {"name": "SHELL BALIBAGO", "region": "South Luzon"}, {"name": "PACITA", "region": "Visayas"}, {"name": "ROBINSONS PLACE LEVEL 1", "region": "Mindanao"}, {"name": "SHELL CANOCOTAN", "region": "Metro Manila"}, {"name": "JETTI ANTIPOLO - MDT", "region": "North Luzon"}, {"name": "SHELL MABIGA", "region": "South Luzon"}, {"name": "PANGANIBAN", "region": "Visayas"}, {"name": "ROBINSONS PLACE LEVEL 2", "region": "Mindanao"}, {"name": "SHELL CATALUNAN GRANDE", "region": "Metro Manila"}, {"name": "JMB", "region": "North Luzon"}, {"name": "SHELL MARILAO", "region": "South Luzon"}, {"name": "PASIG 4", "region": "Visayas"}, {"name": "ROBINSONS TACLOBAN", "region": "Mindanao"}, {"name": "SHELL DIA", "region": "Metro Manila"}, {"name": "JP RIZAL", "region": "North Luzon"}, {"name": "SHELL SAN FERNANDO PARIAN", "region": "South Luzon"}, {"name": "PASIG II SHOP", "region": "Visayas"}, {"name": "ROXAS TERMINAL", "region": "Mindanao"}, {"name": "SHELL DIGOS", "region": "Metro Manila"}, {"name": "KAI MALL", "region": "North Luzon"}, {"name": "SHELL SUMACAB", "region": "South Luzon"}, {"name": "PASIG ROTONDA", "region": "Visayas"}, {"name": "SHELL GUSA", "region": "Mindanao"}];
+        const container = document.getElementById('branchesContainer');
+        const searchInput = document.getElementById('searchInput');
+        const regionFilter = document.getElementById('regionFilter');
+        const resultsCount = document.getElementById('resultsCount');
+
+        renderBranches(allBranches);
+
+        function getDisplayRegionColor(region) {
+            if (region.includes("Manila")) return "bg-dunkin-orange text-white";
+            if (region.includes("Luzon")) return "bg-yellow-400 text-yellow-900";
+            if (region.includes("Visayas")) return "bg-dunkin-pink text-white";
+            if (region.includes("Mindanao")) return "bg-purple-500 text-white";
+            return "bg-gray-200 text-gray-800";
+        }
+
+        function renderBranches(branches) {
+            container.innerHTML = '';
+            
+            if (branches.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <span class="text-5xl mb-4 block">😢</span>
+                        <h3 class="text-2xl font-bold text-gray-700">No branches found!</h3>
+                        <p class="text-gray-500">Try a different search term or region.</p>
+                    </div>
+                `;
+                resultsCount.textContent = "0 branches found";
+                return;
+            }
+
+            resultsCount.textContent = `Showing ${branches.length} branch${branches.length > 1 ? 'es' : ''}`;
+
+            branches.forEach(b => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-5 rounded-2xl shadow-sm border-2 border-gray-100 card-hover flex flex-col justify-between h-full';
+                
+                const regionBadgeColor = getDisplayRegionColor(b.region);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3 gap-2">
+                            <h3 class="font-display text-lg text-dunkin-brown leading-tight">${b.name}</h3>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold ${regionBadgeColor}">
+                            ${b.region}
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterData() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedRegion = regionFilter.value;
+
+            const filtered = allBranches.filter(b => {
+                // Search condition
+                const matchesSearch = b.name.toLowerCase().includes(searchTerm) || b.region.toLowerCase().includes(searchTerm);
+                
+                // Region condition
+                let matchesRegion = true;
+                if (selectedRegion !== "All") {
+                    if (selectedRegion === "Luzon") {
+                        matchesRegion = b.region === "North Luzon" || b.region === "South Luzon";
+                    } else {
+                        matchesRegion = b.region === selectedRegion;
+                    }
+                }
+
+                return matchesSearch && matchesRegion;
+            });
+
+            renderBranches(filtered);
+        }
+
+        searchInput.addEventListener('input', filterData);
+        regionFilter.addEventListener('change', filterData);
+
+    </script>
+</body>
+</html>
